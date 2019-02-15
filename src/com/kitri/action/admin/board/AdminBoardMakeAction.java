@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.kitri.action.Action;
 
 public class AdminBoardMakeAction implements Action {
-
+	
 	private AdminBoardMakeAction() {}
 	
 	private static Action adminBoardMakeAction;

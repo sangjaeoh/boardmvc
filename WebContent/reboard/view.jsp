@@ -14,7 +14,9 @@ $(document).ready(function() {
 	});
 	
 	$(".replyBtn").click(function() {
-		
+		$("#act").val("mvreply");
+		$("#seq").val("${article.seq}");
+		$("#commonForm").attr("action", "${root}/reboard").submit();
 	});
 	
 	$(".newlist").click(function() {
@@ -30,6 +32,21 @@ $(document).ready(function() {
 		$("#act").val("listarticle");		
 		$("#commonForm").attr("action", "${root}/reboard").submit();
 	});
+	
+	
+	$(".modifyBtn").click(function() {
+		$("#act").val("mvmodify");
+		$("#seq").val("${article.seq}");
+		$("#commonForm").attr("action", "${root}/reboard").submit();
+	});
+	
+	
+	$(".deleteBtn").click(function() {
+		$("#act").val("deletearticle");
+		$("#seq").val("${article.seq}");
+		$("#commonForm").attr("action", "${root}/reboard").submit();
+		});
+	
 	
 });
 </script>
@@ -58,6 +75,16 @@ $(document).ready(function() {
 		 width="64" height="22"	border="0" align="absmiddle" alt="글쓰기">
 		<img class="replyBtn" src="${root}/img/board/btn_reply.gif"
 		 width="40" height="22"	border="0" align="absmiddle" alt="답글">
+		 
+		 
+		<c:if test="${userInfo.id == article.id}">
+		<img class="modifyBtn" src="${root}/img/board/btn_modify.gif"
+		 	border="0" align="absmiddle" alt="글수정">
+		<img class="deleteBtn" src="${root}/img/board/btn_delete.gif"
+			border="0" align="absmiddle" alt="글삭제">
+		</c:if>
+		 
+		 
 		 			
 		</td>
 		<td valign="bottom" width="100%" style="padding-left: 4px"></td>
@@ -84,7 +111,7 @@ $(document).ready(function() {
 	</tr>
 	<tr height="28">
 		<td class="bg_board_title" colspan="2" style="padding-left: 14px">
-		<b><font class="text"> ${article.subject}</font></b></td>
+		<b><font class="text" id = > ${article.subject}</font></b></td>
 	</tr>
 	<tr>
 		<td class="bg_board_title_02" colspan="2" height="1"
@@ -92,7 +119,7 @@ $(document).ready(function() {
 	</tr>
 	<tr height="26">
 		<td width="100%" style="padding-left: 14px"><font class="stext">번호
-		:</font> <font class="text_commentnum">${article.seq}</font> &nbsp; <font
+		:</font> <font class="text_commentnum" id =>${article.seq}</font> &nbsp; <font
 			class="stext">글쓴이 :</font> <a href="javascript:;"
 			onClick="showSideView();" class="link_board_02">${article.name}</a><br>
 		</td>

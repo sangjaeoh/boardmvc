@@ -3,7 +3,7 @@ package com.kitri.util;
 public class Validator {
 	
 	public static String nullToBlank(String tmp) {		
-		return tmp == null ? "" : tmp;
+		return tmp == null ? "" : tmp.trim();
 	}
 	
 	

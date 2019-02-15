@@ -1,6 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/template/board_common.jsp"%>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#registerBtn").click(function() {
+		if($("#subject").val().trim().length == 0){
+			alert("제목을 입력해 주세요!");
+			return;
+		}else if($("#content").val().trim().length == 0){
+			alert("내용을 입력해 주세요!");
+			return;
+		}else {
+			$("#writeForm").attr("action","${root}/uploadcontrol").submit();		
+		}
+	});
+});
+</script>
+
 <!-- title -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
@@ -28,14 +44,15 @@
 </table>
 <br>
 
-<form id="writeForm" name="writeForm" method="post" action=""
+<form id="writeForm" name="writeForm" method="post" action="" enctype="multipart/form-data"
 	style="margin: 0px">
 <div id="attach_file_hdn"></div>
 
-<input type="hidden" name="" value="">
-<input type="hidden" name="" value="">
-<input type="hidden" name="" value="">
-<input type="hidden" name="" value="">
+<input type="hidden" name="act" value="picture">
+<input type="hidden" name="bcode" value="${bcode}">
+<input type="hidden" name="pg" value="1">
+<input type="hidden" name="key" value="">
+<input type="hidden" name="word" value="">
 
 <table border="0" cellpadding="5" cellspacing="0" width="630"
 	style="table-layout: fixed">
@@ -58,9 +75,17 @@
 			height="4" border="0" align="absmiddle"> <b>글내용</b></td>
 			<td colspan="5">
 			 <textarea
-			name="content" class="inp_02" cols="67" rows="25" scrollbars="no"></textarea>
+			name="content" id="content" class="inp_02" cols="67" rows="25" scrollbars="no"></textarea>
 		</td>
 	</tr>
+	<tr>
+		<td width="95" nowrap style="padding-left: 8px; padding-top: 10px">
+		<img src="${root}/img/board/e_dot.gif" width="4"
+			height="4" border="0" align="absmiddle"> <b>사진첨부</b></td>
+			<td colspan="5">
+				<input type="file" name="picture"/>	
+		</td>
+	</tr>	
 </table>
 <table width="630" cellpadding="0" cellspacing="0" border="0">
 	<tr>
@@ -76,10 +101,10 @@
 		<td height="10" style="padding: 0px"></td>
 	</tr>
 	<tr>
-		<td align="center"><a href="javascript:writeArticle();"><img
-			src="${root}/img/board/btn_register.gif" width="42" height="21"
-			border="0" name="register" value="" alt="등록"></a> <a
-			href="javascript:history.back();"><img
+		<td align="center">
+			<img src="${root}/img/board/btn_register.gif" width="42" height="21"
+			border="0" id="registerBtn" value="" alt="등록"> 
+			<a href="javascript:history.back();"><img
 			src="${root}/img/board/b_cancel.gif" width="42" height="21"
 			border="0" name="cencel" value="" alt="취소"></a></td>
 	</tr>

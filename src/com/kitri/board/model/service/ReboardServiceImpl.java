@@ -36,8 +36,8 @@ public class ReboardServiceImpl implements ReboardService {
 	@Override
 	public List<ReboardDto> listArticle(int bcode, int pg, String key, String word) {
 		//페이지 번호 로직
-		int end = pg * BoardConstance.LIST_SIZE;
-		int start = end - BoardConstance.LIST_SIZE;
+		int end = pg * BoardConstance.ARTICLE_LIST_SIZE;
+		int start = end - BoardConstance.ARTICLE_LIST_SIZE;
 		
 		Map<String, String> map = new HashMap<>();
 		map.put("bcode", bcode + "");		
@@ -62,26 +62,33 @@ public class ReboardServiceImpl implements ReboardService {
 
 	@Override
 	public int replyArticle(ReboardDto reboardDto) {
-
-		return 0;
+		
+		int seq = CommonDaoImpl.getCommonDao().getNextSeq();
+		reboardDto.setSeq(seq);		
+		return ReboardDaoImpl.getReboardDao().replyArticle(reboardDto) != 0 ? seq : 0;	
 	}
 
 	@Override
 	public ReboardDto getArticle(int seq) {
-
-		return null;
+		
+		ReboardDto reboardDto = ReboardDaoImpl.getReboardDao().viewArticle(seq);
+		if(reboardDto != null) {
+		reboardDto.setContent(reboardDto.getContent().replaceAll("\n", "<br>"));}
+		
+		return reboardDto;
 	}
 
 	@Override
 	public int modifyArticle(ReboardDto reboardDto) {
-
-		return 0;
+		
+		
+		return ReboardDaoImpl.getReboardDao().modifyArticle(reboardDto);
 	}
 
 	@Override
 	public int deleteArticle(int seq) {
 
-		return 0;
+		return ReboardDaoImpl.getReboardDao().deleteArticle(seq);
 	}
 
 }

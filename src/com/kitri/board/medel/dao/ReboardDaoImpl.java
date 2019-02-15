@@ -93,17 +93,32 @@ public class ReboardDaoImpl implements ReboardDao {
 			sql.append("				from board b, reboard r \n");
 			sql.append("				where b.seq = r.seq \n");
 			sql.append("				and b.bcode = ? \n");
-			sql.append("				order by b.seq desc \n");
+			String key = map.get("key");
+			String word = map.get("word");
+			if(!key.isEmpty() && !word.isEmpty()) {
+					if("subject".equals(key)) {
+					sql.append("				and b.subject like '%'||?||'%' \n");
+					}else {
+					sql.append("				and b." + key + " = ? \n");	
+					}				
+			}
+			
+			sql.append("				order by ref desc, step \n");
 			sql.append("			) a \n");
 			sql.append("		where rownum <= ? \n");
 			sql.append("	) b \n");
 			sql.append("where b.rn > ?");
 			
-			pstmt=conn.prepareStatement(sql.toString());
 			
-			pstmt.setString(1, map.get("bcode"));
-			pstmt.setString(2, map.get("end"));
-			pstmt.setString(3, map.get("start"));			
+			pstmt=conn.prepareStatement(sql.toString());	
+			
+			int idx = 1;			
+			pstmt.setString(idx++, map.get("bcode"));			
+			if(!key.isEmpty() && !word.isEmpty()) {
+				pstmt.setString(idx++, word);
+			}			
+			pstmt.setString(idx++, map.get("end"));
+			pstmt.setString(idx++, map.get("start"));			
 			rs = pstmt.executeQuery();
 
 			while(rs.next()) {
@@ -191,8 +206,81 @@ public class ReboardDaoImpl implements ReboardDao {
 
 	@Override
 	public int replyArticle(ReboardDto reboardDto) {
-		// TODO Auto-generated method stub
-		return 0;
+		int cnt = 0;
+
+
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			DBConnection.getInstance();
+			conn = DBConnection.makeConnection();
+			conn.setAutoCommit(false);
+		
+			
+			StringBuffer update_step = new StringBuffer();
+			update_step.append(" update reboard \n");
+			update_step.append(" 	set step = step + 1 \n");
+			update_step.append(" 	where ref = ? \n");
+			update_step.append(" 	and step > ? ");
+			
+			pstmt=conn.prepareStatement(update_step.toString());
+			pstmt.setInt(1,reboardDto.getRef());
+			pstmt.setInt(2,reboardDto.getStep());
+			pstmt.executeUpdate();
+			pstmt.close();
+			
+			StringBuffer insert_reply = new StringBuffer();
+			insert_reply.append("insert all \n");
+			insert_reply.append("	into board (seq, id, name, email, subject, content, hit, logtime, bcode)\n");
+			insert_reply.append("	values (?, ?, ?, ?, ?, ?, 0, sysdate, ?) \n");
+			insert_reply.append("	into reboard (rseq, seq, ref, lev, step, pseq, reply) \n");
+			insert_reply.append("	values (reboard_rseq.nextval, ?, ?, ?, ?, ?, 0) \n");
+			insert_reply.append("select * from dual");
+			pstmt=conn.prepareStatement(insert_reply.toString());			
+			int idx = 1;
+			pstmt.setInt(idx++, reboardDto.getSeq());
+			pstmt.setString(idx++, reboardDto.getId());
+			pstmt.setString(idx++, reboardDto.getName());
+			pstmt.setString(idx++, reboardDto.getEmail());
+			pstmt.setString(idx++, reboardDto.getSubject());
+			pstmt.setString(idx++, reboardDto.getContent());
+			pstmt.setInt(idx++, reboardDto.getBcode());
+			pstmt.setInt(idx++, reboardDto.getSeq());		
+			pstmt.setInt(idx++, reboardDto.getRef());
+			pstmt.setInt(idx++, reboardDto.getLev() + 1);
+			pstmt.setInt(idx++, reboardDto.getStep() + 1);
+			pstmt.setInt(idx++, reboardDto.getPseq());
+			pstmt.executeUpdate();
+			pstmt.close();
+			
+			
+			StringBuffer update_replay = new StringBuffer();
+			update_replay.append(" update reboard \n");
+			update_replay.append(" set reply = reply + 1 \n");
+			update_replay.append(" where seq = ?");
+			
+			pstmt=conn.prepareStatement(update_replay.toString());
+			pstmt.setInt(1, reboardDto.getPseq());
+			pstmt.executeUpdate();
+
+			conn.commit();			
+			cnt = 1;			
+			
+		}catch(SQLException e) {
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}finally {
+			DBClose.close(conn, pstmt);
+		}
+		
+		return cnt;
 	}
 
 	@Override
@@ -203,14 +291,48 @@ public class ReboardDaoImpl implements ReboardDao {
 
 	@Override
 	public int modifyArticle(ReboardDto reboardDto) {
-		// TODO Auto-generated method stub
-		return 0;
+		int cnt = 0;
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			DBConnection.getInstance();
+			conn = DBConnection.makeConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("update board \n");
+			sql.append("	set subject = ?, \n");
+			sql.append("	content = ? \n");
+			sql.append("	where seq = ? ");
+			
+						
+			pstmt=conn.prepareStatement(sql.toString());
+			
+			
+			int idx = 1;
+
+			pstmt.setString(idx++, reboardDto.getSubject());
+			pstmt.setString(idx++, reboardDto.getContent());
+			pstmt.setInt(idx++, reboardDto.getSeq());				
+			
+			cnt = pstmt.executeUpdate();				
+			
+		}catch(SQLException e) {			
+			e.printStackTrace();
+		}finally {
+			DBClose.close(conn, pstmt);
+		}
+		
+		return cnt;
 	}
 
 	@Override
 	public int deleteArticle(int seq) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		int cnt = 0;
+		
+		return cnt;
 	}
 
 }

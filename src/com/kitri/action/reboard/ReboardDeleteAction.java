@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.kitri.action.Action;
+import com.kitri.board.model.service.ReboardServiceImpl;
 
 public class ReboardDeleteAction implements Action {
 
@@ -32,7 +33,15 @@ public class ReboardDeleteAction implements Action {
 
 	@Override
 	public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		return "";
+		
+		int seq = Integer.parseInt(request.getParameter("seq")) ;
+		int cnt = ReboardServiceImpl.getReboardService().deleteArticle(seq);
+		if (cnt!=0) {
+			
+		}else {
+			return "/index.jsp";
+		}
+		return "/reboard/view.jsp";	
 
 	}
 

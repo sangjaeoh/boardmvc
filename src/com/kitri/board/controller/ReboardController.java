@@ -1,6 +1,7 @@
 package com.kitri.board.controller;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +24,7 @@ public class ReboardController extends HttpServlet {
 		String key =  Validator.nullToBlank(request.getParameter("key"));
 		String word = Validator.nullToBlank(request.getParameter("word"));
 
-		String queryString = "?bcode=" + bcode + "&pg=" + pg + "&key=" + key + "&word=" + word;
+		String queryString = "?bcode=" + bcode + "&pg=" + pg + "&key=" + key + "&word=" + URLEncoder.encode(word, BoardConstance.ENCODER);
 		
 		
 		String path = "/index.jsp";
@@ -44,10 +45,26 @@ public class ReboardController extends HttpServlet {
 			path += queryString;
 			PageMove.forward(request, response, path);
 			
-		}else if("".equals(act)) {
-			
-		}else if("".equals(act)) {
-			
+		}else if("mvmodify".equals(act)) {		
+			path = BoardActionFactory.getReboardMoveModifyAction().execute(request, response);
+			path += queryString;
+			PageMove.forward(request, response, path);
+		}else if("modifyarticle".equals(act)) {
+			path = BoardActionFactory.getReboardModifyAction().execute(request, response);
+			path += queryString;
+			PageMove.forward(request, response, path);
+		}else if("deletearticle".equals(act)) {
+			path = BoardActionFactory.getReboardDeleteAction().execute(request, response);
+			path += queryString;
+			PageMove.forward(request, response, path);			
+		}else if("mvreply".equals(act)) {
+			path = BoardActionFactory.getReboardMoveReplyAction().execute(request, response);
+			path += queryString;
+			PageMove.forward(request, response, path);	
+		}else if("replyarticle".equals(act)) {
+			path = BoardActionFactory.getReboardReplyAction().execute(request, response);
+			path += queryString;
+			PageMove.forward(request, response, path);	
 		}else{			
 		}
 	}

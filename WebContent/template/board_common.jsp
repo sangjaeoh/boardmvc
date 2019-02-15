@@ -6,6 +6,7 @@
 <c:set var="pg" value="${param.pg}"/>
 <c:set var="key" value="${param.key}"/>
 <c:set var="word" value="${param.word}"/>    
+
     
 <!DOCTYPE html>
 <html>

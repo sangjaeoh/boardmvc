@@ -1,6 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ include file="/template/board_common.jsp"%>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#registerBtn").click(function() {
+		if($("#subject").val().trim().length == 0){
+			alert("제목을 입력해 주세요!");
+			return;
+		}else if($("#content").val().trim().length == 0){
+			alert("내용을 입력해 주세요!");
+			return;
+		}else {
+			$("#modifyForm").attr("action","${root}/reboard").submit();		
+		}
+	});
+});
+</script>
+
 <!-- title -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
@@ -28,9 +45,15 @@
 </table>
 <br>
 
-<form id="writeForm" name="writeForm" method="post" action=""
+<form id="modifyForm" name="modifyForm" method="post" action=""
 	style="margin: 0px">
 <div id="attach_file_hdn"></div>
+
+<input type="hidden" name="act" value="modifyarticle">
+<input type="hidden" name="bcode" value="${bcode}">
+<input type="hidden" name="pg" value="1">
+<input type="hidden" name="seq" value="${article.seq}">
+
 
 <input type="hidden" name="" value="">
 
@@ -40,10 +63,10 @@
 		<tr valign="top">
 		<td width="95" nowrap style="padding-left: 8px; padding-top: 10px"><img
 			src="${root}/img/board/e_dot.gif" width="4" height="4" border="0"
-			align="absmiddle"> <b>제목</b></td>
+			align="absmiddle"> <b>글제목</b></td>
 		<td colspan="5"><input name="subject" id="subject" type="text"
 			size="76" maxlength="150" class="inp_02" style="width: 300px"
-			value=""><img src="${root}/img/board/i_info.gif" width="12"
+			value="${article.subject}"><img src="${root}/img/board/i_info.gif" width="12"
 			height="11" border="0" align="absmiddle" vspace="8"
 			style="margin: 3 3 0 6"><font class="stext">최대 한글 75자,
 		영문 150자</font><br>
@@ -55,7 +78,7 @@
 			height="4" border="0" align="absmiddle"> <b>글내용</b></td>
 			<td colspan="5">
 			 <textarea
-			name="content" class="inp_02" cols="67" rows="25" scrollbars="no"></textarea>
+			name="content" id="content" class="inp_02" cols="67" rows="25" scrollbars="no">${article.content}</textarea>
 		</td>
 	</tr>
 </table>
@@ -73,12 +96,11 @@
 		<td height="10" style="padding: 0px"></td>
 	</tr>
 	<tr>
-		<td align="center"><a href="javascript:writeArticle();"><img
-			src="${root}/img/board/btn_register.gif" width="42" height="21"
-			border="0" name="register" alt="등록"></a> <a
-			href="javascript:history.back();"><img
+		<td align="center">
+		<img src="${root}/img/board/btn_register.gif" width="42" height="21"
+			border="0" name="registerBtn" id="registerBtn" alt="등록"><img
 			src="${root}/img/board/b_cancel.gif" width="42" height="21"
-			border="0" name="cencel" alt="취소"></a></td>
+			border="0" name="cencel" alt="취소"></td>
 	</tr>
 </table>
 </form>

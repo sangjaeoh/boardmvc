@@ -63,7 +63,7 @@ $(document).ready(function() {
 			<div class="menu_body">	
 		<c:set var="preCcode" value="${boardListDto.ccode}"/>	
 		</c:if>
-			<a href="${root}/${boardListDto.control}?act=mvwrite&bcode=${boardListDto.bcode}&pg=1&key=&word=">
+			<a href="${root}/${boardListDto.control}?act=listarticle&bcode=${boardListDto.bcode}&pg=1&key=&word=">
 			${boardListDto.bname}
 			</a>
 		<c:if test="${i.index < boardmenu.size() - 1}">

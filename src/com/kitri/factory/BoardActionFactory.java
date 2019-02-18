@@ -1,6 +1,7 @@
 package com.kitri.factory;
 
 import com.kitri.action.Action;
+import com.kitri.action.memo.*;
 import com.kitri.action.reboard.*;
 
 public class BoardActionFactory {
@@ -15,6 +16,12 @@ public class BoardActionFactory {
 	private static Action reboardDeleteAction;
 	private static Action reboardMoveReplyAction;
 
+	//댓글
+	private static Action memoWriteAction;
+	private static Action memoModifyAction;
+	private static Action memoListAction;
+	private static Action memoDeleteAction;
+	
 
 	static {
 		
@@ -29,7 +36,11 @@ public class BoardActionFactory {
 		reboardDeleteAction = ReboardDeleteAction.getReboardDeleteAction();
 		reboardMoveReplyAction = ReboardMoveReplyAction.getReboardMoveReplyAction();
 		
-
+//댓글
+		memoWriteAction = MemoWriteAction.getMemoWriteAction();
+		memoModifyAction = MemoModifyAction.getMemoModifyAction();
+		memoListAction = MemoListAction.getMemoListAction();
+		memoDeleteAction = MemoDeleteAction.getMemoDeleteAction();
 	}
 	
 	
@@ -67,4 +78,22 @@ public class BoardActionFactory {
 		return reboardMoveModifyAction;
 	}
 
+	public static Action getMemoWriteAction() {
+		return memoWriteAction;
+	}
+
+	public static Action getMemoModifyAction() {
+		return memoModifyAction;
+	}
+
+	public static Action getMemoListAction() {
+		return memoListAction;
+	}
+
+	public static Action getMemoDeleteAction() {
+		return memoDeleteAction;
+	}
+
+	
+	
 }

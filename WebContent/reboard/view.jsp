@@ -47,9 +47,10 @@ $(document).ready(function() {
 		$("#commonForm").attr("action", "${root}/reboard").submit();
 		});
 	
-	$("#memoBtn").click(function(){
+	$("#memoBtn").click(function(){		
 		var seq = "${article.seq}";
 		var mcontent = $("#mcontent").val();
+		$("#mcontent").val("");
 		var param = {"act" : "writememo", "seq": seq, "mcontent" : mcontent};
 		$.ajax({
 			url: '${root}/memo',
@@ -57,7 +58,7 @@ $(document).ready(function() {
 			data: param,
 			datatype: 'json',
 			success: function(response){
-				
+				makeList(response);
 			},
 			error: function(){
 				
@@ -65,8 +66,113 @@ $(document).ready(function() {
 		});
 	});
 	
+
+	
+	$.ajax({
+		url: '${root}/memo',
+		type: 'GET',
+		data: {"act" : "listmemo", "seq": "${article.seq}"},
+		datatype: 'json',
+		success: function(response){
+			makeList(response);
+		},
+		error: function(){
+			
+		} 
+	});
 	
 });
+//동적으로 이벤트를 처리할때는 ready가 아니라 on을 써야한다!
+$(document).on("click", ".viewModifyBtn", function() {
+		$(this).parents("tr").attr("style", "display: none;");
+		$(this).parents("tr").next().attr("style", "display:;");		
+});
+
+$(document).on("click", ".mModifyCancelBtn", function() {
+		$(this).parents("tr").attr("style", "display: none;");
+		$(this).parents("tr").prev().attr("style", "display:;");		
+});
+
+$(document).on("click", ".mModifyBtn", function() {
+		
+	var seq = "${article.seq}";
+	var mseq = $(this).parents("tr").attr("mseq-data");
+	var mcontent = $("#modifycontent"+mseq).val();
+	$("#mcontent").val("");
+	var param = {"act" : "modifymemo", "mseq": mseq,"seq": seq, "mcontent" : mcontent};
+	$.ajax({
+		url: '${root}/memo',
+		type: 'POST',
+		data: param,
+		datatype: 'json',
+		success: function(response){
+			makeList(response);
+		},
+		error: function(){
+			
+		} 
+	});		
+});
+
+$(document).on("click", ".mDeleteBtn", function() {
+	
+	if(confirm("정말로 삭제하시겠습니까?")){
+	var seq = "${article.seq}";
+	var mseq = $(this).parents("tr").attr("mseq-data");
+	var param = {"act" : "deletememo", "mseq": mseq,"seq": seq};
+	$.ajax({
+		url: '${root}/memo',
+		type: 'GET',
+		data: param,
+		datatype: 'json',
+		success: function(response){
+			makeList(response);
+		},
+		error: function(){
+			
+		} 
+	});
+	}	
+});
+
+
+
+
+function makeList(memos){
+	$("#memolist").children("tr").remove(); //memolist의 자식테그tr을 remove해라
+	var memocnt = memos.memolist.length;
+	var viewlist = "";
+	for(var i=0;i<memocnt;i++){
+		var memo = memos.memolist[i];
+		viewlist += "<tr mseq-data='"+memo.mseq+"' height=\"40\">";
+		viewlist += "	<td width=\"100\" style=\"padding-left: 14px\">"+memo.name+"</td>";
+		viewlist += "	<td align=\"left\">"+memo.mcontent+"</td>";
+		viewlist += "	<td width=\"100\">"+memo.mtime+"</td>";
+		viewlist += "	<td width=\"100\">";
+		if('${userInfo.id}' == memo.id){
+		viewlist += "		<input type='button' class='viewModifyBtn' value='수정'>";
+		viewlist += "		<input type='button' class='mDeleteBtn' value='삭제'>";
+		}
+		viewlist += "	</td>";
+		viewlist += "</tr>";
+		viewlist += "<tr mseq-data='"+memo.mseq+"' style='display:none;'>";
+		viewlist += "	<td colspan=\"3\" height=\"30\" style=\"padding: 10px\">";
+		viewlist += "		<textarea id=\"modifycontent" +memo.mseq+ "\" rows=\"4\" cols=\"170\">"+memo.mcontent+"</textarea>";
+		viewlist += "	</td>";
+		viewlist += "	<td>";
+		viewlist += "		<input type='button' class='mModifyBtn' value='수정'>";
+		viewlist += "		<input type='button' class='mModifyCancelBtn' value='취소'>";
+		viewlist += "	</td>";
+		viewlist += "</tr>";
+		viewlist += "<tr>";
+		viewlist += "	<td class=\"bg_board_title_02\" colspan=\"4\" height=\"1\" style=\"overflow: hidden; padding: 0px\"></td>";
+		viewlist += "</tr>";		
+	}
+	$("#memolist").append(viewlist);
+	
+}
+
+	
 </script>
 <!-- title -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -210,33 +316,35 @@ $(document).ready(function() {
 <br><br><br><br>
 <table cellpadding="0" cellspacing="0" border="0" width="100%">
 	<tr>
-		<td colspan="3" height="5" style="padding: 0px"></td>
+		<td colspan="4" height="5" style="padding: 0px"></td>
 	</tr>
 	<tr>
-		<td class="bg_board_title_02" colspan="3" height="1"
+		<td class="bg_board_title_02" colspan="4" height="1"
 			style="overflow: hidden; padding: 0px"></td>
 	</tr>
 	<tr>
-		<td colspan="3" height="5" style="padding: 0px"></td>
+		<td colspan="4" height="5" style="padding: 0px"></td>
 	</tr>
 	<tr>
-		<td colspan="2" height="30" style="padding: 10px">
+		<td colspan="3" height="30" style="padding: 10px">
 		<textarea id="mcontent" rows="4" cols="170"></textarea>
 		</td>
 		<td>
-		<c:if test="${userInfo != null}">
-		<button id="memoBtn">작성</button>
+		<c:if test="${userInfo != null}">		
+		<input type="button" id="memoBtn" value="작성"/> 
 		</c:if>
 		</td>
 	</tr>
 	<tr>
-		<td colspan="3" height="5" style="padding: 0px"></td>
+		<td colspan="4" height="5" style="padding: 0px"></td>
 	</tr>
 	<tr>
-		<td class="bg_board_title_02" colspan="3" height="1"
+		<td class="bg_board_title_02" colspan="4" height="1"
 			style="overflow: hidden; padding: 0px"></td>
 	</tr>
 	<tbody id="memolist"></tbody>
+	
+	
 </table>
 </c:if>
 

@@ -36,13 +36,12 @@ public class MemoServiceImpl implements MemoService {
 
 	@Override
 	public void modifyMemo(MemoDto memoDto) {
-	
-
+		MemoDaoImpl.getMemoDaoImpl().modifyMemo(memoDto);
 	}
 
 	@Override
 	public void deleteMemo(int mseq) {
-	
+		MemoDaoImpl.getMemoDaoImpl().deleteMemo(mseq);
 
 	}
 

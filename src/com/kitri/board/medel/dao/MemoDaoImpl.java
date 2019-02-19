@@ -99,14 +99,61 @@ public class MemoDaoImpl implements MemoDao {
 
 	@Override
 	public void modifyMemo(MemoDto memoDto) {
-		// TODO Auto-generated method stub
+
+
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+				
+		try {
+			DBConnection.getInstance();
+			conn = DBConnection.makeConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("update memo \n");			
+			sql.append("set mcontent = ? \n");			
+			sql.append("where mseq = ? \n");			
+			
+			pstmt=conn.prepareStatement(sql.toString());
+			
+			int idx = 1;			
+			pstmt.setString(idx++, memoDto.getMcontent());
+			pstmt.setInt(idx++, memoDto.getMseq());	
+			
+			pstmt.executeUpdate();				
+			
+		}catch(SQLException e) {			
+			e.printStackTrace();
+		}finally {
+			DBClose.close(conn, pstmt);
+		}
+		
 
 	}
 
 	@Override
 	public void deleteMemo(int mseq) {
-		// TODO Auto-generated method stub
-
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+				
+		try {
+			DBConnection.getInstance();
+			conn = DBConnection.makeConnection();
+			StringBuffer sql = new StringBuffer();
+			sql.append("delete memo \n");			
+			sql.append("where mseq = ? \n");			
+			
+			pstmt=conn.prepareStatement(sql.toString());
+			
+			int idx = 1;			
+			pstmt.setInt(idx++, mseq);			
+			pstmt.executeUpdate();				
+			
+		}catch(SQLException e) {			
+			e.printStackTrace();
+		}finally {
+			DBClose.close(conn, pstmt);
+		}		
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.kitri.board.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,22 +20,19 @@ public class MemoController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String act = request.getParameter("act");
 		String list ="";
-	
+		
+		response.setContentType("application/x-json;charset=UTF-8");
+		PrintWriter out = response.getWriter();	
 		if("writememo".equals(act)) {
-			list = BoardActionFactory.getMemoWriteAction().execute(request, response);
-			
-		}else if("".equals(act)) {
-			
-		}else if("".equals(act)) {
-			
-		}else if("".equals(act)) {
-			
-		}else if("".equals(act)) {
-			
-		}else if("".equals(act)) {
-			
-		}else{			
+			list = BoardActionFactory.getMemoWriteAction().execute(request, response);			
+		}else if("listmemo".equals(act)) {
+			list = BoardActionFactory.getMemoListAction().execute(request, response);
+		}else if("modifymemo".equals(act)) {
+			list = BoardActionFactory.getMemoModifyAction().execute(request, response);
+		}else if("deletememo".equals(act)) {
+			list = BoardActionFactory.getMemoDeleteAction().execute(request, response);
 		}
+		out.println(list);
 	}
 
 	

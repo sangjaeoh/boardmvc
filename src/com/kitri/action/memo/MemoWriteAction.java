@@ -41,6 +41,8 @@ public class MemoWriteAction implements Action {
 			MemoServiceImpl.getMemoServiceImpl().writememo(memoDto);
 			
 			List<MemoDto> list = MemoServiceImpl.getMemoServiceImpl().listMemo(seq);
+			
+			
 			JSONObject mlist = new JSONObject();
 			JSONArray jarray = new JSONArray();
 			for(MemoDto mDto : list) {
